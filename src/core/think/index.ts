@@ -161,13 +161,15 @@ function inferIntent(question: string, anchor?: string): string {
 }
 
 function tryParseJSON(text: string): unknown {
-  // The model may wrap JSON in code fences. Strip if present.
-  const stripped = text.trim().replace(/^```(?:json)?\s*\n?/, '').replace(/```\s*$/, '');
+  // Strip thinking blocks from reasoning models (qwen3, deepseek-r1, etc.)
+  let cleaned = text.replace(/<think>[\s\S]*?<\/think>/g, '');
+  // Strip code fences.
+  cleaned = cleaned.trim().replace(/^```(?:json)?\s*\n?/, '').replace(/```\s*$/, '');
   try {
-    return JSON.parse(stripped);
+    return JSON.parse(cleaned);
   } catch {
     // Fallback: extract the first {...} block. Useful when the model emits prose alongside JSON.
-    const m = stripped.match(/\{[\s\S]*\}/);
+    const m = cleaned.match(/\{[\s\S]*\}/);
     if (m) {
       try { return JSON.parse(m[0]); } catch { /* ignore */ }
     }

@@ -21,6 +21,14 @@ export const ollama: Recipe = {
       // OLLAMA_NUM_PARALLEL config; no static cap to declare. v0.32 (#779).
       no_batch_cap: true,
     },
+    chat: {
+      // Ollama serves OpenAI-compatible /v1/chat/completions for any pulled model.
+      // No fixed allow-list — openai-compat tier accepts arbitrary model ids.
+      models: [],
+      supports_tools: true,
+      cost_per_1m_tokens_usd: 0,
+      price_last_verified: '2026-06-01',
+    },
   },
   setup_hint: 'Install Ollama from https://ollama.ai, then `ollama pull nomic-embed-text` and `ollama serve`.',
 };
